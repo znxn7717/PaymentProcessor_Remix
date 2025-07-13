@@ -1,28 +1,175 @@
-REMIX DEFAULT WORKSPACE
+پردازشگر پرداخت (PaymentProcessor)
+این پروژه یک قرارداد هوشمند اتریوم است که برای مدیریت پرداخت‌ها با استفاده از توکن USDT طراحی شده است. قرارداد از الگوی پراکسی کلونینگ (Cloning Proxy Pattern) با استفاده از کتابخانه OpenZeppelin بهره می‌برد تا قراردادهای پراکسی سبک و مقیاس‌پذیر برای هر پرداخت ایجاد کند. این پروژه در محیط Remix IDE توسعه یافته و آماده استقرار در شبکه‌های اتریوم یا شبکه‌های سازگار است.
+ویژگی‌ها
 
-Remix default workspace is present when:
-i. Remix loads for the very first time 
-ii. A new workspace is created with 'Default' template
-iii. There are no files existing in the File Explorer
+ایجاد پراکسی برای پرداخت‌ها: برای هر پرداخت یک قرارداد پراکسی منحصربه‌فرد با استفاده از Clones ایجاد می‌شود.
+مدیریت پرداخت‌ها: هر پرداخت با یک cartUuid منحصربه‌فرد شناسایی می‌شود و شامل مقدار مورد انتظار، زمان انقضا و وضعیت پردازش است.
+پشتیبانی از USDT: قرارداد با توکن USDT کار می‌کند و از رابط استاندارد IERC20 استفاده می‌کند.
+کنترل دسترسی: فقط مالک قرارداد می‌تواند پراکسی‌های جدید ایجاد کند یا وجوه را برداشت کند.
+امنیت پرداخت: پرداخت‌ها باید در بازه 0.1٪ تا 5٪ مقدار مورد انتظار باشند و قبل از انقضا انجام شوند.
+رویدادها: رویدادهای ProxyCreated و PaymentReceived برای ردیابی ایجاد پراکسی و دریافت پرداخت‌ها.
 
-This workspace contains 3 directories:
+پیش‌نیازها
+برای استفاده از این پروژه، به موارد زیر نیاز دارید:
 
-1. 'contracts': Holds three contracts with increasing levels of complexity.
-2. 'scripts': Contains four typescript files to deploy a contract. It is explained below.
-3. 'tests': Contains one Solidity test file for 'Ballot' contract & one JS test file for 'Storage' contract.
+Remix IDE: برای کامپایل و استقرار قراردادها (remix.ethereum.org).
+Metamask یا کیف‌پول مشابه: برای تعامل با شبکه اتریوم.
+شبکه اتریوم یا تست‌نت: مانند Sepolia، Goerli یا شبکه محلی (Hardhat/Truffle).
+آدرس قرارداد USDT: آدرس قرارداد USDT در شبکه‌ای که استفاده می‌کنید.
+Node.js و npm (اختیاری): برای مدیریت وابستگی‌ها در صورت استفاده از ابزارهای اضافی مانند Hardhat.
+Git: برای کلون کردن و مدیریت پروژه.
 
-SCRIPTS
+نصب و راه‌اندازی
 
-The 'scripts' folder has four typescript files which help to deploy the 'Storage' contract using 'web3.js' and 'ethers.js' libraries.
+کلون کردن پروژه:
 
-For the deployment of any other contract, just update the contract name from 'Storage' to the desired contract and provide constructor arguments accordingly 
-in the file `deploy_with_ethers.ts` or  `deploy_with_web3.ts`
+مخزن را از GitHub کلون کنید:git clone https://github.com/znxn7717/PaymentProcessor_Remix.git
+cd PaymentProcessor_Remix
 
-In the 'tests' folder there is a script containing Mocha-Chai unit tests for 'Storage' contract.
 
-To run a script, right click on file name in the file explorer and click 'Run'. Remember, Solidity file must already be compiled.
-Output from script will appear in remix terminal.
 
-Please note, require/import is supported in a limited manner for Remix supported modules.
-For now, modules supported by Remix are ethers, web3, swarmgw, chai, multihashes, remix and hardhat only for hardhat.ethers object/plugin.
-For unsupported modules, an error like this will be thrown: '<module_name> module require is not supported by Remix IDE' will be shown.
+
+وابستگی‌ها:
+
+این پروژه از کتابخانه OpenZeppelin استفاده می‌کند. اگر از Remix استفاده می‌کنید، کتابخانه به‌صورت خودکار از طریق آدرس‌های واردشده (@openzeppelin/contracts) بارگذاری می‌شود.
+در صورت استفاده از Hardhat یا Truffle، کتابخانه OpenZeppelin را نصب کنید:npm install @openzeppelin/contracts
+
+
+
+
+بارگذاری در Remix:
+
+فایل‌های پروژه (PaymentProcessor.sol) را در Remix IDE آپلود کنید.
+اطمینان حاصل کنید که نسخه کامپایلر Solidity روی ^0.8.20 تنظیم شده باشد.
+
+
+
+ساختار پروژه
+
+PaymentProcessor.sol: شامل دو قرارداد:
+PaymentProcessor: قرارداد اصلی که پراکسی‌ها را ایجاد و مدیریت می‌کند و پرداخت‌ها را ردیابی می‌کند.
+PaymentProxy: قرارداد پراکسی که برای هر پرداخت ایجاد می‌شود و منطق دریافت و انتقال پرداخت را پیاده‌سازی می‌کند.
+
+
+وابستگی‌ها:
+@openzeppelin/contracts/proxy/Clones.sol: برای ایجاد پراکسی‌ها با الگوی کلونینگ.
+@openzeppelin/contracts/token/ERC20/IERC20.sol: برای تعامل با توکن USDT.
+
+
+
+نحوه استقرار
+
+کامپایل قرارداد:
+
+در Remix، قرارداد PaymentProcessor.sol را کامپایل کنید.
+مطمئن شوید که هیچ خطای کامپایل وجود ندارد.
+
+
+استقرار قرارداد اصلی (PaymentProcessor):
+
+در بخش Deploy & Run Transactions در Remix، قرارداد PaymentProcessor را انتخاب کنید.
+دو پارامتر ورودی را وارد کنید:
+_usdtContract: آدرس قرارداد USDT در شبکه موردنظر (مثلاً آدرس USDT در Sepolia).
+_implementation: آدرس قرارداد PaymentProxy که باید ابتدا مستقر شود.
+
+
+قرارداد را در شبکه انتخابی (مانند Sepolia) مستقر کنید.
+
+
+استقرار قرارداد پراکسی (PaymentProxy):
+
+ابتدا قرارداد PaymentProxy را به‌صورت جداگانه مستقر کنید و آدرس آن را ذخیره کنید.
+این آدرس به‌عنوان _implementation در قرارداد PaymentProcessor استفاده می‌شود.
+
+
+ایجاد پرداخت جدید:
+
+تابع createPaymentProxy را با پارامترهای زیر فراخوانی کنید:
+cartUuid: یک شناسه یکتا برای پرداخت (به‌صورت bytes32).
+payAmount: مقدار مورد انتظار پرداخت (با در نظر گرفتن اعشار USDT، معمولاً 6).
+expirationDate: زمان انقضای پرداخت (به‌صورت timestamp یونیکس).
+
+
+این تابع یک پراکسی جدید ایجاد می‌کند و آدرس آن را برمی‌گرداند.
+
+
+دریافت پرداخت:
+
+در قرارداد پراکسی ایجادشده، تابع receivePayment را فراخوانی کنید تا پرداخت USDT پردازش شود.
+اطمینان حاصل کنید که مقدار ارسالی در بازه مجاز (0.1٪ تا 5٪) است و پرداخت قبل از انقضا انجام می‌شود.
+
+
+
+توابع کلیدی
+قرارداد PaymentProcessor
+
+createPaymentProxy(bytes32 cartUuid, uint256 payAmount, uint256 expirationDate): ایجاد یک پراکسی جدید برای پرداخت.
+markPaymentProcessed(bytes32 cartUuid): علامت‌گذاری پرداخت به‌عنوان پردازش‌شده (فقط توسط پراکسی مربوطه قابل فراخوانی).
+withdrawUSDT(uint256 amount): برداشت اضطراری USDT توسط مالک.
+slice(bytes memory data, uint256 start, uint256 len): تابع کمکی برای برش داده‌های بایت برای مدیریت خطاها.
+
+قرارداد PaymentProxy
+
+initialize(address _usdtContract, bytes32 _cartUuid): مقداردهی اولیه پراکسی با آدرس USDT و شناسه پرداخت.
+receivePayment(): دریافت و پردازش پرداخت USDT.
+
+رویدادها
+
+ProxyCreated(address proxy, bytes32 cartUuid): هنگام ایجاد یک پراکسی جدید.
+PaymentReceived(address proxy, bytes32 cartUuid, uint256 amount): هنگام دریافت موفقیت‌آمیز پرداخت.
+
+نکات امنیتی
+
+کنترل دسترسی: فقط مالک می‌تواند پراکسی ایجاد کند یا وجوه را برداشت کند.
+محدودیت‌های پرداخت: مقدار پرداخت باید در بازه 0.1٪ تا 5٪ مقدار مورد انتظار باشد.
+مدیریت انقضا: پرداخت‌ها پس از انقضا غیرقابل پردازش هستند.
+مدیریت خطاها: خطاهای قرارداد پراکسی با استفاده از تابع slice به‌درستی مدیریت می‌شوند.
+
+تست و دیباگ
+
+تست در Remix:
+از قابلیت Solidity Unit Testing در Remix برای تست توابع استفاده کنید.
+سناریوهای مختلف مانند پرداخت‌های نامعتبر، انقضای پرداخت، و برداشت اضطراری را تست کنید.
+
+
+شبکه‌های تست:
+قرارداد را در شبکه‌های تست مانند Sepolia مستقر کنید و با USDT تستی (در دسترس از طریق faucetهای شبکه) آزمایش کنید.
+
+
+ابزارهای پیشنهادی:
+Hardhat/Truffle: برای تست و استقرار پیشرفته‌تر.
+Slither: برای تحلیل امنیتی قرارداد.
+
+
+
+نمونه استفاده
+
+استقرار قرارداد PaymentProxy و ذخیره آدرس آن.
+استقرار قرارداد PaymentProcessor با آدرس USDT و آدرس PaymentProxy.
+ایجاد یک پراکسی پرداخت با createPaymentProxy برای یک cartUuid خاص.
+انتقال USDT به آدرس پراکسی و فراخوانی receivePayment برای پردازش پرداخت.
+بررسی رویدادهای ProxyCreated و PaymentReceived برای اطمینان از عملکرد صحیح.
+
+محدودیت‌ها
+
+قرارداد به توکن USDT وابسته است و باید آدرس معتبر USDT ارائه شود.
+مدیریت خطاها به‌صورت دستی با تابع slice انجام می‌شود که ممکن است در سناریوهای پیچیده نیاز به بهبود داشته باشد.
+قرارداد در حال حاضر فقط از USDT پشتیبانی می‌کند.
+
+توسعه آینده
+
+پشتیبانی از چند توکن: اضافه کردن امکان استفاده از سایر توکن‌های ERC20.
+مدیریت انعطاف‌پذیرتر انقضا: امکان تمدید زمان انقضا توسط مالک.
+رابط کاربری: توسعه یک رابط کاربری وب برای تعامل ساده‌تر با قرارداد.
+
+مشارکت
+برای مشارکت در پروژه:
+
+مخزن را فورک کنید.
+تغییرات خود را در یک شاخه جدید اعمال کنید.
+یک Pull Request ایجاد کنید و توضیحات کاملی از تغییرات ارائه دهید.
+
+مجوز
+این پروژه تحت مجوز MIT منتشر شده است. برای جزئیات، به فایل LICENSE مراجعه کنید.
+تماس
+برای سوالات یا پشتیبانی، با مالک پروژه در GitHub (@znxn7717) تماس بگیرید یا یک Issue در مخزن ایجاد کنید.
